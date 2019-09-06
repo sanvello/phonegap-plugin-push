@@ -204,10 +204,21 @@ NSString *const pushPluginApplicationDidBecomeActiveNotification = @"pushPluginA
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void(^)(void))completionHandler
 {
-    NSLog(@"Push Plugin didReceiveNotificationResponse: actionIdentifier %@, notification: %@", response.actionIdentifier,
+
+    // On a cold start, it seems that the action here needs to be handled correctly. The "notification" listener
+    // is the default listener in notificationService.js. The functionality here is that we end up calling the 
+    // success callback in push.js, which checks to see what the actionCallback is prior to emitting the event.
+    // The action is overriding the notification callback in this case, so we make sure that the default action
+    // is handled correctly.
+    NSString* action = response.actionIdentifier;
+    if ([action isEqualToString:UNNotificationDefaultActionIdentifier]) {
+        action =  @"notification";;
+    }
+    
+    NSLog(@"Push Plugin didReceiveNotificationResponse: actionIdentifier %@, notification: %@", action,
           response.notification.request.content.userInfo);
     NSMutableDictionary *userInfo = [response.notification.request.content.userInfo mutableCopy];
-    [userInfo setObject:response.actionIdentifier forKey:@"actionCallback"];
+    [userInfo setObject:action forKey:@"actionCallback"];
     NSLog(@"Push Plugin userInfo %@", userInfo);
 
     switch ([UIApplication sharedApplication].applicationState) {
