@@ -71,6 +71,25 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
   @Override
   public void onMessageReceived(RemoteMessage message) {
 
+    // Handle the case where we may be receiving a push notification from Braze. We do this through
+    // reflection because we don't want to use the import, causing a build break, if it is not already there.
+    try {
+      Class clazz = Class.forName("com.appboy.AppboyFirebaseMessagingService");
+      if (clazz != null) {
+        Method method = clazz.getMethod("handleBrazeRemoteMessage", Context.class, RemoteMessage.class);
+        if (method != null) {
+          Object result = method.invoke(this, getApplicationContext(), message);
+          if ( (result != null) && (result instanceof Boolean)) {
+            if (((Boolean) result).booleanValue())
+              return;
+          }
+        }
+      }
+    }
+    catch (Exception e) {
+      Log.d(LOG_TAG, "Could not find Braze FCM Messaging service, ignoring.");
+    }
+
     String from = message.getFrom();
     Log.d(LOG_TAG, "onMessage - from: " + from);
 
