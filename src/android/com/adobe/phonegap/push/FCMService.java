@@ -30,7 +30,6 @@ import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 
-import com.appboy.AppboyFirebaseMessagingService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
