@@ -30,6 +30,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 
+import com.appboy.AppboyFirebaseMessagingService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -39,6 +40,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -71,8 +73,6 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
   @Override
   public void onMessageReceived(RemoteMessage message) {
 
-    // Handle the case where we may be receiving a push notification from Braze. We do this through
-    // reflection because we don't want to use the import, causing a build break, if it is not already there.
     try {
       Class clazz = Class.forName("com.appboy.AppboyFirebaseMessagingService");
       if (clazz != null) {
@@ -89,6 +89,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
     catch (Exception e) {
       Log.d(LOG_TAG, "Could not find Braze FCM Messaging service, ignoring.");
     }
+
 
     String from = message.getFrom();
     Log.d(LOG_TAG, "onMessage - from: " + from);
