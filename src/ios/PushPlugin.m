@@ -661,6 +661,7 @@
 
         switch (settings.authorizationStatus) {
             case UNAuthorizationStatusNotDetermined:
+            case UNAuthorizationStatusProvisional:
             {
                 [weakCenter requestAuthorizationWithOptions:authorizationOptions completionHandler:^(BOOL granted, NSError * _Nullable error) {
                     if (granted) {
