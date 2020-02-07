@@ -2,6 +2,7 @@ package com.adobe.phonegap.push;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
@@ -29,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,6 +49,39 @@ public class PushPlugin extends CordovaPlugin implements PushConstants {
   private static boolean gForeground = false;
 
   private static String registration_id = "";
+
+  static {
+
+    // Don't let Braze display the notification. This has the effect of calling Appboy.setCustomAppboyNotificationFactory();
+    try {
+      Class appboyClazz = Class.forName("com.appboy.Appboy");
+      Class notificationFactoryClass = Class.forName("com.appboy.IAppboyNotificationFactory");
+
+      if (appboyClazz != null && notificationFactoryClass != null) {
+
+        Object newFactory = java.lang.reflect.Proxy.newProxyInstance(
+                notificationFactoryClass.getClassLoader(),
+                new java.lang.Class[] {notificationFactoryClass},
+                new java.lang.reflect.InvocationHandler() {
+
+                  @Override
+                  public Object invoke(Object proxy, Method method, Object[] args) {
+                    return null;
+                  }
+                }
+        );
+
+        Method method = appboyClazz.getMethod("setCustomAppboyNotificationFactory", notificationFactoryClass);
+        if (method != null) {
+
+          method.invoke(null, newFactory);
+        }
+      }
+    }
+    catch (Exception e) {
+      Log.e(LOG_TAG, "There was an error overriding the Braze notification factory: " + e.getMessage());
+    }
+  }
 
   /**
    * Gets the application context from cordova's main activity.
