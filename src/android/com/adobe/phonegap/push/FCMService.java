@@ -59,6 +59,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
   private static final String LOG_TAG = "Push_FCMService";
   private static HashMap<Integer, ArrayList<String>> messageMap = new HashMap<Integer, ArrayList<String>>();
 
+  // add a comment
   public void setNotification (int notId, String message) {
     ArrayList<String> messageList = messageMap.get(notId);
     if (messageList == null) {
