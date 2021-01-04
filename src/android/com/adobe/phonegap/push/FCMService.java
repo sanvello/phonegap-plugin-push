@@ -59,7 +59,40 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
   private static final String LOG_TAG = "Push_FCMService";
   private static HashMap<Integer, ArrayList<String>> messageMap = new HashMap<Integer, ArrayList<String>>();
 
-  public void setNotification (int notId, String message) {
+  static {
+
+    // Don't let Braze display the notification. This has the effect of calling Appboy.setCustomAppboyNotificationFactory();
+    try {
+      Class appboyClazz = Class.forName("com.appboy.Appboy");
+      Class notificationFactoryClass = Class.forName("com.appboy.IAppboyNotificationFactory");
+
+      if (appboyClazz != null && notificationFactoryClass != null) {
+
+        Object newFactory = java.lang.reflect.Proxy.newProxyInstance(
+                notificationFactoryClass.getClassLoader(),
+                new java.lang.Class[] {notificationFactoryClass},
+                new java.lang.reflect.InvocationHandler() {
+
+                  @Override
+                  public Object invoke(Object proxy, Method method, Object[] args) {
+                    return null;
+                  }
+                }
+        );
+
+        Method method = appboyClazz.getMethod("setCustomAppboyNotificationFactory", notificationFactoryClass);
+        if (method != null) {
+
+          method.invoke(null, newFactory);
+        }
+      }
+    }
+    catch (Exception e) {
+      Log.e(LOG_TAG, "There was an error overriding the Braze notification factory: " + e.getMessage());
+    }
+  }
+
+  public void setNotification(int notId, String message) {
     ArrayList<String> messageList = messageMap.get(notId);
     if (messageList == null) {
       messageList = new ArrayList<String>();
