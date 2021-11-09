@@ -49,8 +49,10 @@ import java.util.List;
 import java.util.Map;
 import java.security.SecureRandom;
 
+import static com.adobe.phonegap.push.PushConstants.*;
+
 @SuppressLint("NewApi")
-public class FCMService extends FirebaseMessagingService implements PushConstants {
+public class FCMService extends FirebaseMessagingService {
 
   private static final String APPBOY_PUSH_CONTENT_KEY = "a";
   private static final String APPBOY_PUSH_TITLE_KEY = "t";
@@ -167,7 +169,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
       Context applicationContext = getApplicationContext();
 
       SharedPreferences prefs = applicationContext.getSharedPreferences(
-        PushPlugin.COM_ADOBE_PHONEGAP_PUSH,
+        COM_ADOBE_PHONEGAP_PUSH,
         Context.MODE_PRIVATE
       );
       boolean forceShow = prefs.getBoolean(FORCE_SHOW, false);
@@ -510,7 +512,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
         .setAutoCancel(true);
 
     SharedPreferences prefs = context.getSharedPreferences(
-      PushPlugin.COM_ADOBE_PHONEGAP_PUSH,
+      COM_ADOBE_PHONEGAP_PUSH,
       Context.MODE_PRIVATE
     );
     String localIcon = prefs.getString(ICON, null);
@@ -1085,7 +1087,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
   }
 
   private boolean isAvailableSender(String from) {
-    SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(PushPlugin.COM_ADOBE_PHONEGAP_PUSH,
+    SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(COM_ADOBE_PHONEGAP_PUSH,
         Context.MODE_PRIVATE);
     String savedSenderID = sharedPref.getString(SENDER_ID, "");
 

@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-public class PushDismissedHandler extends BroadcastReceiver implements PushConstants {
+import static com.adobe.phonegap.push.PushConstants.*;
+
+public class PushDismissedHandler extends BroadcastReceiver {
   private static String LOG_TAG = "Push_DismissedHandler";
 
   @Override
