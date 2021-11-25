@@ -8,9 +8,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.core.app.RemoteInput;
+import static com.adobe.phonegap.push.PushConstants.*;
 
-
-public class PushHandlerActivity extends Activity implements PushConstants {
+public class PushHandlerActivity extends Activity {
   private static String LOG_TAG = "Push_HandlerActivity";
 
   /*
