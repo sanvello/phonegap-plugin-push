@@ -1,8 +1,9 @@
 package com.adobe.phonegap.push;
 
+import static com.adobe.phonegap.push.PushConstants.*;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
@@ -13,9 +14,10 @@ import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -32,16 +34,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
-
-import static com.adobe.phonegap.push.PushConstants.*;
 
 public class PushPlugin extends CordovaPlugin {
 
@@ -436,7 +436,13 @@ public class PushPlugin extends CordovaPlugin {
         if (topics != null && !"".equals(registration_id)) {
           unsubscribeFromTopics(topics, registration_id);
         } else {
-          FirebaseInstallations.getInstance().delete().getResult();
+          Task<Void> deleteTask = FirebaseInstallations.getInstance().delete();
+          try {
+            Tasks.await(deleteTask);
+          } catch (ExecutionException | InterruptedException e) {
+            Log.v(LOG_TAG, "Unable to delete token");
+            callbackContext.error(e.getMessage());
+          }
           Log.v(LOG_TAG, "UNREGISTER");
 
           // Remove shared prefs
