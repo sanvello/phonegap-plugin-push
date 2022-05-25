@@ -24,6 +24,10 @@ public class BackgroundActionButtonHandler extends BroadcastReceiver implements 
     if (extras != null) {
       Bundle originalExtras = extras.getBundle(PUSH_BUNDLE);
 
+      if (originalExtras == null) {
+        originalExtras = extras;
+      }
+
       originalExtras.putBoolean(FOREGROUND, false);
       originalExtras.putBoolean(COLDSTART, false);
       originalExtras.putString(ACTION_CALLBACK, extras.getString(CALLBACK));
