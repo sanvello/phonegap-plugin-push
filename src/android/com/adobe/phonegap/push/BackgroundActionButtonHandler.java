@@ -1,5 +1,6 @@
 package com.adobe.phonegap.push;
 
+import static com.adobe.phonegap.push.PushConstants.*;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,7 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import androidx.core.app.RemoteInput;
 
-public class BackgroundActionButtonHandler extends BroadcastReceiver implements PushConstants {
+public class BackgroundActionButtonHandler extends BroadcastReceiver {
   private static String LOG_TAG = "Push_BGActionButton";
 
   @Override
